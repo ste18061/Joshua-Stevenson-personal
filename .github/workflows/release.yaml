@@ -1,9 +1,14 @@
-name: Terraform CI/CD
+name: Terraform Manual Deploy
 
 on:
-  push:
-    branches: [ "main" ]
   workflow_dispatch:
+    inputs:
+      aws_access_key_id:
+        description: "AWS Access Key"
+        required: true
+      aws_secret_access_key:
+        description: "AWS Secret Key"
+        required: true
 
 jobs:
   terraform:
@@ -12,6 +17,10 @@ jobs:
     defaults:
       run:
         working-directory: ./iac
+
+    env:
+      AWS_ACCESS_KEY_ID: ${{ github.event.inputs.aws_access_key_id }}
+      AWS_SECRET_ACCESS_KEY: ${{ github.event.inputs.aws_secret_access_key }}
 
     steps:
       - name: Checkout code
