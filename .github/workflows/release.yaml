@@ -1,0 +1,39 @@
+name: Terraform Manual Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      aws_access_key_id:
+        description: "AWS Access Key"
+        required: true
+      aws_secret_access_key:
+        description: "AWS Secret Key"
+        required: true
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./iac
+
+    env:
+      AWS_ACCESS_KEY_ID: ${{ github.event.inputs.aws_access_key_id }}
+      AWS_SECRET_ACCESS_KEY: ${{ github.event.inputs.aws_secret_access_key }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Plan
+        run: terraform plan
+
+      - name: Terraform Apply
+        run: terraform apply --auto-approve
